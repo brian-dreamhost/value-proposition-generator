@@ -1,23 +1,20 @@
 import { useState } from 'react'
-import BuildForm from './components/BuildForm.jsx'
-import FrameworkCard from './components/FrameworkCard.jsx'
+import BuildTab from './components/BuildTab.jsx'
 import AnalyzeTab from './components/AnalyzeTab.jsx'
-import { generateFrameworks } from './utils/vpUtils.js'
+import CompareTab from './components/CompareTab.jsx'
 
-const TABS = ['Build', 'Analyze Existing']
+const TABS = [
+  { id: 'build', label: 'Build', icon: 'M12 4.5v15m7.5-7.5h-15' },
+  { id: 'analyze', label: 'Analyze', icon: 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z' },
+  { id: 'compare', label: 'A/B Compare', icon: 'M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5' },
+]
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('Build')
-  const [frameworks, setFrameworks] = useState([])
-
-  const handleGenerate = (inputs) => {
-    const results = generateFrameworks(inputs)
-    setFrameworks(results)
-  }
+  const [activeTab, setActiveTab] = useState('build')
 
   return (
     <div className="bg-glow bg-grid min-h-screen">
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-12">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 py-12">
         {/* Breadcrumb */}
         <nav className="mb-8 text-sm text-galactic">
           <a href="https://seo-tools-tau.vercel.app/" className="text-azure hover:text-white transition-colors">Free Tools</a>
@@ -34,45 +31,34 @@ export default function App() {
           </div>
           <h1 className="text-4xl sm:text-5xl font-bold text-white mb-4">Value Proposition Generator</h1>
           <p className="text-cloudy text-lg max-w-2xl mx-auto">
-            Struggling to explain what you do and why it matters? Enter your product details once and get 5 proven frameworks — Steve Blank, Geoffrey Moore, USP, Elevator Pitch, and a punchy Tagline.
+            Enter your product details once and get 5 scored frameworks — Steve Blank, Geoffrey Moore, USP, Elevator Pitch, and Tagline — with specific improvement tips for each.
           </p>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-8 border-b border-metal/20 pb-0">
+        <div className="flex gap-1 sm:gap-2 mb-8 border-b border-metal/20 pb-0 overflow-x-auto">
           {TABS.map(tab => (
             <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors -mb-px border-b-2 ${
-                activeTab === tab
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-1.5 px-3 sm:px-4 py-2.5 text-sm font-medium rounded-t-lg transition-colors -mb-px border-b-2 whitespace-nowrap ${
+                activeTab === tab.id
                   ? 'border-azure text-azure'
                   : 'border-transparent text-galactic hover:text-cloudy'
               }`}
             >
-              {tab}
+              <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} />
+              </svg>
+              <span>{tab.label}</span>
             </button>
           ))}
         </div>
 
         {/* Tab content */}
-        {activeTab === 'Build' ? (
-          <div className="flex flex-col gap-8">
-            <BuildForm onGenerate={handleGenerate} />
-            {frameworks.length > 0 && (
-              <div>
-                <h2 className="text-white font-semibold text-xl mb-5">Your 5 Value Propositions</h2>
-                <div className="grid grid-cols-1 gap-5">
-                  {frameworks.map(fw => (
-                    <FrameworkCard key={fw.id} framework={fw} />
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <AnalyzeTab />
-        )}
+        {activeTab === 'build' && <BuildTab />}
+        {activeTab === 'analyze' && <AnalyzeTab />}
+        {activeTab === 'compare' && <CompareTab />}
 
         {/* Footer */}
         <footer className="mt-16 pt-8 border-t border-metal/30 text-center text-sm text-galactic">
